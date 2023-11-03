@@ -1,13 +1,13 @@
 import { PizzaService } from './pizza.service';
 import { Request, Response } from "express";
 
-
 export class PizzaController {
 
   static findAllPizzas = async(req: Request, res: Response) => {
     try {
-      const pizzas = await PizzaService.findAll()
 
+      const pizzas = await PizzaService.findAll()
+    
       return res.json(pizzas)
     } catch (error) {
       return res.status(500).json({ message: error })
@@ -16,6 +16,20 @@ export class PizzaController {
 
   static createPizza = async(req: Request, res: Response) => {
     const { name, description, price, size } = req.body;
+
+    if(!name){
+      return res.status(422).json({
+        status: 'error',
+        message: 'name is required'
+      })
+    }
+
+    if(name.length <= 3){
+      return res.status(422).json({
+        status: 'error',
+        message: 'Name must be more than three characters.'
+      })
+    }
 
     try {
       const pizza = await PizzaService.create({ name, description, price, size })
